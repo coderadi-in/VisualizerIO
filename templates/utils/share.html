@@ -1,0 +1,45 @@
+<link rel="stylesheet" href="{{ url_for('static', filename='css/utils/popup.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/utils/share.css') }}">
+
+<section class="popup-container" id="share-popup">
+    <section class="popup-content column gap-20">
+        <div class="head row gap-20">
+            <button class="btn" id="back">
+                <img src="{{ url_for('static', filename='assets/icons/'+settings.theme+'/back.png') }}" alt="Back"
+                    class="icon">
+            </button>
+
+            <h2 class="h2">Share project</h2>
+        </div>
+
+        <span class="text">Anyone with this link will be able to view this project.</span>
+        <span class="text" id="link">{{ base_url }}/projects/{{ data.project.id }}/</span>
+
+        <button class="icon-btn" id="copy-share-link" onclick="copyLink()">
+            <img src="{{ url_for('static', filename='assets/icons/common/copy.png') }}" alt="Copy" class="icon">
+            <span class="text">Copy</span>
+        </button>
+        </div>
+    </section>
+</section>
+
+<script>
+    async function copyText(textToCopy) {
+        try {
+            await navigator.clipboard.writeText(textToCopy);
+            console.log('Text copied to clipboard successfully!');
+        } catch (err) {
+            console.error('Failed to copy text: ', err);
+        }
+    }
+
+    const copyBtn = document.querySelector("#copy-share-link");
+
+    function copyLink() {
+        let link = document.querySelector("#link").innerHTML;
+        copyText(link);
+        
+        copyBtn.querySelector(".icon").src = "/static/assets/icons/common/done.png";
+        copyBtn.querySelector(".text").innerHTML = "Copied";
+    }
+</script>

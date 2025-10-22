@@ -1,0 +1,9 @@
+.popup-content #link {
+    text-align: left;
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid var(--border);
+    background-color: var(--surface);
+}
+
+.popup-content .icon-btn {width: fit-content;}

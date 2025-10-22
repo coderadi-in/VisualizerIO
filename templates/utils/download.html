@@ -1,0 +1,33 @@
+<link rel="stylesheet" href="{{ url_for('static', filename='css/utils/popup.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/utils/download.css') }}">
+
+<section class="popup-container" id="download-popup">
+    <section class="popup-content column gap-20">
+        <div class="head row gap-20">
+            <button class="btn" id="back">
+                <img src="{{ url_for('static', filename='assets/icons/'+settings.theme+'/back.png') }}" alt="Back" class="icon">
+            </button>
+
+            <h2 class="h2">Download project</h2>
+        </div>
+
+        <div class="icon-content" id="download-icon">
+            <img src="{{ url_for('static', filename='assets/icons/common/download.png') }}" alt="download" class="icon">
+        </div>
+
+        <span class="text" id="status">Your download is being ready...</span>
+
+        <div class="download-preview row gap-10">
+            <img src="{{ url_for('static', filename='assets/icons/common/doc.png') }}" alt="Download" class="icon">
+
+            <div class="text-content column">
+                <span class="text">Download {{ data.project.title }}.zip</span>
+                <span class="mini">calculating...</span>
+            </div>
+        </div>
+
+        <a class="link filled-btn" id="download-btn">Download</a>
+    </section>
+</section>
+
+<script src="{{ url_for('static', filename='js/utils/download.js') }}"></script> 

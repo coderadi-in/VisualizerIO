@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en" class="{{ settings.theme }} {{ settings.accent }}">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{{ data.project.title }} &bull; Project Visualizer</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='assets/icons/common/icon.ico') }}"
+        type="image/x-icon">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/project.css') }}">
+</head>
+
+<body class="{{ settings.theme }} {{ settings.accent }}" data-chart-color="{{ settings.chart_color_schemes }}"
+    data-chart-type="{{ settings.chart_type }}" data-accent="{{ settings.accent }}">
+    {% include 'components/msg.html' %}
+    {% include 'components/notifications.html' %}
+    {% include 'utils/project.html' %}
+    {% include 'utils/objective.html' %}
+    {% include 'utils/team.html' %}
+    {% include 'utils/share.html' %}
+    {% include 'utils/download.html' %}
+
+    <section class="app-content">
+        {% include 'components/sidebar.html' %}
+
+        <section class="app-body">
+            {% include 'components/header.html' %}
+
+            <main class="main column gap-20">
+                <div class="title res-row h-sb gap-20">
+                    <div class="res-row gap-20">
+                        <div class="basic row gap-10">
+                            <img src="{{ data.project.icon }}" alt="Project Icon" class="logo">
+                            <h2 class="h2" id="project-title">{{ data.project.title }}</h2>
+                            <span class="text tag" id="{{ data.project.status }}">{{ data.project.status }}</span>
+                        </div>
+
+                        <div class="tags row gap-10">
+                            {% for tag in data.project.tags %}
+                                <span class="text tag secondary">{{ tag }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <span class="mini" id="project-id" style="display: none;">{{ data.project.id }}</span>
+                    <span class="mini" id="admin-id" style="display: none;">{{ data.admin.id }}</span>
+                </div>
+
+                <div class="overview flex gap-20">
+                    <div class="data-section project-overview column gap-10">
+                        <p class="para" id="project-desc">{{ data.project.desc }}</p>
+                        <hr class="divider">
+                        <div class="column gap-10">
+                            <h3 class="h3">Objectives</h3>
+                            
+                            <div class="res-row gap-10">
+                                <span class="tag success">{{ data.objectives_overview.completed }} completed</span>
+                                <span class="tag danger">{{ data.objectives_overview.incomplete }} left</span>
+                            </div>
+
+                            <div class="column gap-10">
+                                {% for url in data.project.urls %}
+                                    <a href="{{ url }}" class="link outlined-btn re-url">{{ url }}</a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if data.team %}
+                    <div class="data-section member-overview column gap-10">
+                        <div class="head row gap-10">
+                            <h3 class="h3">Members overview</h3>
+                            <span class="mini" id="team-id" style="display: none;">{{ data.team.id }}</span>
+                        </div>
+
+                        <canvas id="contribution-chart"></canvas>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="objectives column gap-10">
+                    <div class="head row gap-20">
+                        <h3 class="h3">Objectives</h3>
+
+                        <div class="filter-bar row gap-10">
+                            <a href="/projects/{{ data.project.id }}/?filter=done" class="link btn"><img
+                                    src="{{ url_for('static', filename='assets/icons/common/done.png') }}" alt="Done"
+                                    class="icon"></a>
+                            <a href="/projects/{{ data.project.id }}/?filter=left" class="link btn"><img
+                                    src="{{ url_for('static', filename='assets/icons/common/not-done.png') }}"
+                                    alt="Not Done" class="icon"></a>
+                            <a href="/projects/{{ data.project.id }}/" class="link btn"><img
+                                    src="{{ url_for('static', filename='assets/icons/common/all.png') }}" alt="All"
+                                    class="icon"></a>
+                        </div>
+                    </div>
+
+                    <div class="body column gap-10">
+                        {% for objective in data.objectives %}
+                        <div class="objective row h-sb gap-10">
+                            <span class="text">{{ objective.task }}</span>
+
+                            {% if data.access and data.project.status == 'active' %}
+                            <div class="options row gap-10">
+                                <button class="btn delete-objective" data-obj-id="{{ objective.id }}">
+                                    <img src="{{ url_for('static', filename='assets/icons/'+settings.theme+'/delete.png') }}"
+                                        alt="Delete" class="icon">
+                                </button>
+
+                                {% if objective.isdone %}
+                                <button class="btn mark-objective">
+                                    <img src="{{ url_for('static', filename='assets/icons/'+settings.theme+'/mark.png') }}"
+                                        alt="delete" class="icon checkbox" data-obj-id="{{ objective.id }}">
+                                </button>
+                                {% else %}
+                                <button class="btn">
+                                    <img src="{{ url_for('static', filename='assets/icons/'+settings.theme+'/checkbox.png') }}"
+                                        alt="delete" class="icon checkbox" data-obj-id="{{ objective.id }}">
+                                </button>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="charts row h-se">
+                    <div class="chart-content">
+                        <div class="chart-data">
+                            <canvas id="timeline-chart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-content">
+                        <div class="chart-data">
+                            <canvas id="task-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="projects-data column gap-20">
+                    <div class="data-section images-overview column gap-10">
+                        <h3 class="h3">Project images</h3>
+
+                        <div class="img-group res-row gap-10">
+                            <img src="{{ data.assets.images.cover }}" alt="Cover image" class="img img-sec">
+
+                            <div class="images gap-10 img-sec">
+                                <img src="{{ data.assets.images.other1 }}" alt="Image 1" class="img">
+                                <img src="{{ data.assets.images.other2 }}" alt="Image 2" class="img">
+                                <img src="{{ data.assets.images.other3 }}" alt="Image 3" class="img">
+                                <img src="{{ data.assets.images.other4 }}" alt="Image 4" class="img">
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="divider">
+
+                    <div class="data-section docs-overview column gap-10">
+                        <h3 class="h3">Project documents</h3>
+
+                        {% if data.assets.docs %}
+                        <div class="docs res-row gap-10 h-center">
+                            {% for doc in data.assets.docs %}
+                            <a href="{{ doc.url }}" class="link type-{{ doc.category }}" download>
+                                {% if doc.category == 'images' %}
+                                <img src="{{ doc.url }}" alt="{{ doc.url }}" class="img">
+                                {% else %}
+                                <div class="link-content row gap-10">
+                                    <img src="{{ url_for('static', filename='assets/icons/common/'+doc.category+'.png') }}"
+                                        alt="{{ doc.category }}" class="icon">
+                                    <span class="text">{{ doc.category[:-1] }}</span>
+                                </div>
+                                {% endif %}
+                            </a>
+                            {% endfor %}
+                        </div>                            
+                        {% else %}
+                        <docs class="column gap-10 v-center">
+                            <h1 class="h1">No documents yet.</h1>
+                            <span class="text">Try uploading any file.</span>
+                        </docs>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="ui-toolbar row gap-10 show">
+                    <button class="toolbtn filled-btn" id="share">
+                        <img src="{{ url_for('static', filename='assets/icons/common/share.png') }}" alt="Share"
+                            class="icon">
+                    </button>
+
+                    {% if data.admin.is_admin %}
+                    <a href="/projects/{{ data.project.id }}/settings/" class="link toolbtn filled-btn">
+                        <img src="{{ url_for('static', filename='assets/icons/common/settings.png') }}" alt="Settings"
+                            class="icon">
+                    </a>
+                    {% endif %}
+
+
+                    {% if data.access %}
+                    <a href="/projects/{{ data.project.id }}/settings/#documents" class="link toolbtn filled-btn">
+                        <img src="{{ url_for('static', filename='assets/icons/common/assets.png') }}" alt="Documents"
+                            class="icon">
+                    </a>
+                    {% endif %}
+
+                    <button class="toolbtn filled-btn" id="download">
+                        <img src="{{ url_for('static', filename='assets/icons/common/download.png') }}" alt="Download"
+                            class="icon">
+                    </button>
+
+                    {% if data.access %}
+                    <button class="toolbtn filled-btn" id="add-objective">
+                        <img src="{{ url_for('static', filename='assets/icons/common/add-task.png') }}" alt="Add task"
+                            class="icon">
+                    </button>
+                    {% endif %}
+                </div>
+
+                <button class="filled-btn" id="toolbar-btn">
+                    <img src="{{ url_for('static', filename='assets/icons/common/show.png') }}" alt="Show toolbar"
+                        class="icon show">
+                    <img src="{{ url_for('static', filename='assets/icons/common/hide.png') }}" style="display: none;"
+                        alt="Hide toolbar" class="icon hide">
+                </button>
+            </main>
+        </section>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script src="{{ url_for('static', filename='js/pages/project.js') }}"></script>
+</body>
+
+</html>

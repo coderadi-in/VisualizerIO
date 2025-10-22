@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en" class="{{ settings.theme }} {{ settings.accent }}">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{{ data.project.title }} &bull; Project Visualizer</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='assets/icons/common/icon.ico') }}"
+        type="image/x-icon">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/project-settings.css') }}">
+</head>
+
+<body class="{{ settings.theme }} {{ settings.accent }}">
+    {% include 'components/msg.html' %}
+    {% include 'components/notifications.html' %}
+    {% include 'utils/project.html' %}
+    {% include 'utils/objective.html' %}
+    {% include 'utils/team.html' %}
+
+    <section class="app-content">
+        {% include 'components/sidebar.html' %}
+
+        <section class="app-body">
+            {% include 'components/header.html' %}
+
+            <main class="main column gap-20">
+                <div class="head column gap-10">
+                    <h2 class="h2">Project settings</h2>
+
+                    <a href="/projects/{{ data.project.id }}" class="link row gap-20">
+                        <img src="{{ url_for('static', filename='assets/icons/'+settings.theme+'/back.png') }}"
+                            alt="Back" class="icon">
+                        <span class="text">{{ data.project.title }}</span>
+                    </a>
+
+                    <span id="project-id" style="display: none;">{{ data.project.id }}</span>
+                </div>
+
+                <section class="settings-group column gap-10" id="basic-info">
+                    <h3 class="h3">Basic info</h3>
+
+                    <form action="/projects/{{ data.project.id }}/settings/update/basic" method="post"
+                        class="form column gap-10">
+                        <div class="form-elem column gap-10">
+                            <label for="title">Project title</label>
+                            <input required type="text" name="title" id="title" placeholder="Project title"
+                                value="{{ data.project.title }}" class="input">
+                        </div>
+
+                        <div class="form-elem column gap-10">
+                            <label for="desc">Project description</label>
+                            <textarea name="desc" id="desc" placeholder="Project description"
+                                class="input">{{ data.project.desc }}</textarea>
+                        </div>
+
+                        <div class="form-elem row gap-10">
+                            <label for="st">Start date</label>
+                            <input type="date" name="st" id="st" value="{{ data.project.start_date }}" class="input">
+                        </div>
+
+                        <div class="form-elem row gap-10">
+                            <label for="en">End date</label>
+                            <input type="date" name="en" id="en" value="{{ data.project.end_date }}" class="input">
+                        </div>
+
+                        <button type="submit" class="filled-btn">Update basic info</button>
+                    </form>
+                </section>
+
+                <section class="settings-group column gap-10" id="images">
+                    <h3 class="h3">Cover & other images</h3>
+
+                    <form action="/projects/{{ data.project.id }}/settings/update/assets" method="post"
+                        class="form column gap-10" enctype="multipart/form-data">
+                        <div class="form-inputs row gap-10">
+                            <div class="input-elem cover">
+                                <img src="{{ data.assets.cover }}" class="img">
+
+                                <label for="cover">
+                                    <img src="{{ url_for('static', filename='assets/icons/common/upload.png') }}"
+                                        alt="Upload" class="icon">
+                                </label>
+
+                                <input type="file" name="cover" id="cover" value="{{ data.assets.cover }}" class="input"
+                                    accept="image/*">
+                            </div>
+
+                            <div class="other-images">
+                                <div class="input-elem other">
+                                    <img src="{{ data.assets.other1 }}" alt="" class="img">
+
+                                    <label for="other1">
+                                        <img src="{{ url_for('static', filename='assets/icons/common/upload.png') }}"
+                                            alt="Upload" class="icon">
+                                    </label>
+
+                                    <input type="file" name="other1" id="other1" value="{{ data.assets.other1 }}"
+                                        class="input" accept="image/*">
+                                </div>
+
+                                <div class="input-elem other">
+                                    <img src="{{ data.assets.other2 }}" alt="" class="img">
+
+                                    <label for="other2">
+                                        <img src="{{ url_for('static', filename='assets/icons/common/upload.png') }}"
+                                            alt="Upload" class="icon">
+                                    </label>
+
+                                    <input type="file" name="other2" id="other2" value="{{ data.assets.other2 }}"
+                                        class="input" accept="image/*">
+                                </div>
+
+                                <div class="input-elem other">
+                                    <img src="{{ data.assets.other3 }}" alt="" class="img">
+
+                                    <label for="other3">
+                                        <img src="{{ url_for('static', filename='assets/icons/common/upload.png') }}"
+                                            alt="Upload" class="icon">
+                                    </label>
+
+                                    <input type="file" name="other3" id="other3" value="{{ data.assets.other3 }}"
+                                        class="input" accept="image/*">
+                                </div>
+
+                                <div class="input-elem other">
+                                    <img src="{{ data.assets.other4 }}" alt="" class="img">
+
+                                    <label for="other4">
+                                        <img src="{{ url_for('static', filename='assets/icons/common/upload.png') }}"
+                                            alt="Upload" class="icon">
+                                    </label>
+
+                                    <input type="file" name="other4" id="other4" value="{{ data.assets.other4 }}"
+                                        class="input" accept="image/*">
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="filled-btn">Update assets</button>
+                    </form>
+                </section>
+
+                <section class="settings-group column gap-10" id="team-info">
+                    <h3 class="h3">Team info</h3>
+
+                    <form action="/projects/{{ data.project.id }}/settings/update/team" method="post"
+                        class="form column gap-10">
+                        <div class="form-elem row gap-20">
+                            <label for="current_team">Current team</label>
+
+                            <select required name="current_team" id="current_team" class="input">
+                                {% if data.selected_team %}
+                                <option selected value="{{ data.selected_team.id }}">{{ data.selected_team.title }}
+                                </option>
+                                <option value="0">No team</option>
+                                {% else %}
+                                <option selected value="0">No team</option>
+                                {% endif %}
+                                {% for team in data.teams %}
+                                <option value="{{ team.id }}">{{ team.title }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <button type="submit" class="filled-btn">Update team info</button>
+                    </form>
+                </section>
+
+                <section class="settings-group column gap-10" id="documents">
+                    <h3 class="h3">Project documents</h3>
+
+                    <div class="document-display">
+                        {% if data.docs %}
+                        <div class="content res-row gap-10">
+                            {% for doc in data.docs %}
+                            <a href="{{ doc.url }}" class="link type-{{ doc.category }}" download>
+                                {% if doc.category == 'images' %}
+                                <img src="{{ doc.url }}" alt="{{ doc.url }}" class="img">
+                                {% else %}
+                                <div class="link-content row gap-10">
+                                    <img src="{{ url_for('static', filename='assets/icons/common/'+doc.category+'.png') }}"
+                                        alt="{{ doc.category }}" class="icon">
+                                    <span class="text">{{ doc.category[:-1] }}</span>
+                                </div>
+                                {% endif %}
+                            </a>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <div class="content column gap-10 v-center">
+                            <div class="column gap-10 v-center">
+                                <h2 class="h2">No documents yet</h2>
+                                <p class="para">Upload files related to your project</p>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <form action="/projects/{{ data.project.id }}/settings/update/documents"
+                        class="upload-section row gap-10 form" method="post" enctype="multipart/form-data">
+                        <label for="file">
+                            <img src="{{ url_for('static', filename='assets/icons/common/share.png') }}" alt="Upload"
+                                class="icon">
+                        </label>
+
+                        <input required multiple type="file" name="files[]" id="file" class="input">
+
+                        <button type="submit" class="filled-btn">Upload</button>
+                    </form>
+                </section>
+
+                <section class="settings-group column gap-10" id="urls">
+                    <h3 class="h3">Redirection URLs</h3>
+
+                    <form action="/projects/{{ data.project.id }}/settings/update/links" method="post"
+                        class="form column gap-10">
+                        <div class="form-elem column gap-5">
+                            <label for="link1">URL 1</label>
+                            <input type="url" name="url1" id="url1" value="{{ data.project.urls[0] }}"
+                                placeholder="https://example.com" class="input">
+                        </div>
+
+                        <div class="form-elem column gap-5">
+                            <label for="link2">URL 2</label>
+                            <input type="url" name="url2" id="url2" value="{{ data.project.urls[1] }}"
+                                placeholder="https://example.com" class="input">
+                        </div>
+
+                        <div class="form-elem column gap-5">
+                            <label for="link3">URL 3</label>
+                            <input type="url" name="url3" id="url3" value="{{ data.project.urls[2] }}"
+                                placeholder="https://example.com" class="input">
+                        </div>
+
+                        <button type="submit" class="filled-btn">Update URLs</button>
+                    </form>
+                </section>
+
+                <section class="settings-group column gap-10" id="icon">
+                    <h3 class="h3">Icon</h3>
+
+                    <form method="post" action="/projects/{{ data.project.id }}/settings/update/icon" class="row gap-10"
+                        enctype="multipart/form-data">
+                        <div class="icon-content flex v-center h-center">
+                            <img src="{{ data.project.icon }}" alt="Project Icon" class="icon">
+                        </div>
+                        <input type="file" name="icon" class="input" id="icon-input" accept="image/*">
+
+                        <div class="column gap-10">
+                            <button type="submit" class="filled-btn">Update icon</button>
+                            <span class="mini">Recommended 50x50px, 1:1 aspect ratio</span>
+                        </div>
+                    </form>
+                </section>
+
+                <section class="settings-group column gap-10" id="tags">
+                    <h3 class="h3">Tags</h3>
+
+                    <form action="/projects/{{ data.project.id }}/settings/update/tags" method="post"
+                        class="form res-row gap-10">
+                        <input type="text" name="tag1" value="{{ data.project.tags[0] }}" class="input tag">
+                        <input type="text" name="tag2" value="{{ data.project.tags[1] }}" class="input tag">
+                        <input type="text" name="tag3" value="{{ data.project.tags[2] }}" class="input tag">
+
+                        <button type="submit" class="filled-btn">Update tags</button>
+                    </form>
+                </section>
+
+                <section class="settings-group column gap-10" id="danger-zone">
+                    <h3 class="h3">Danger zone</h3>
+
+                    <div class="row gap-20" id="visibility">
+                        <span class="text">Project visibility</span>
+
+                        <div class="row gap-10">
+                            <img src="{{ url_for('static', filename='assets/icons/common/public.png') }}" alt="Public"
+                                class="icon">
+
+                            <div class="switch" id="switch-body">
+                                {% if data.project.private %}
+                                <div class="ball private" id="switch-ball"></div>
+                                {% else %}
+                                <div class="ball" id="switch-ball"></div>
+                                {% endif %}
+                            </div>
+
+                            <img src="{{ url_for('static', filename='assets/icons/common/private.png') }}" alt="Private"
+                                class="icon">
+                        </div>
+                    </div>
+
+                    <button class="icon-btn" id="delete-project">
+                        <img src="{{ url_for('static', filename='assets/icons/'+settings.theme+'/delete.png') }}"
+                            alt="Delete project" class="icon">
+                        <span class="text">Delete project</span>
+                    </button>
+                </section>
+            </main>
+        </section>
+    </section>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script src="{{ url_for('static', filename='js/pages/project-settings.js') }}"></script>
+</body>
+
+</html>
